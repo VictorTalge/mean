@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Cliente } from '../cliente.model';
 import { ClienteService } from '../cliente.service';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
+import { UsuarioService } from 'src/app/auth/usuario.service';
 @Component({
   selector: 'app-cliente-lista',
   templateUrl: './cliente-lista.component.html',
@@ -14,15 +15,22 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
   public estaCarregando = false;
   totalDeClientes: number = 0;
   totalDeClientesPorPagina: number = 2;
-  opcoesTotalDeClientesPorPagina = [2, 5, 10];
   paginaAtual: number = 1; //definir
-  constructor(public clienteService: ClienteService) {}
+  opcoesTotalDeClientesPorPagina = [1, 2, 5, 10];
+  public autenticado: boolean = false;
+  public idUsuario: string;
+  private authObserver: Subscription;
+  constructor(
+    private clienteService: ClienteService,
+    private usuarioService: UsuarioService
+  ) {}
   ngOnInit(): void {
     this.estaCarregando = true;
     this.clienteService.getClientes(
       this.totalDeClientesPorPagina,
       this.paginaAtual
     );
+    this.idUsuario = this.usuarioService.getIdUsuario();
     this.clientesSubscription = this.clienteService
       .getListaDeClientesAtualizadaObservable()
       .subscribe((dados: { clientes: []; maxClientes: number }) => {
@@ -30,6 +38,10 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
         this.clientes = dados.clientes;
         this.totalDeClientes = dados.maxClientes;
       });
+    this.autenticado = this.usuarioService.isAutenticado();
+    this.authObserver = this.usuarioService
+      .getStatusSubject()
+      .subscribe((autenticado) => (this.autenticado = autenticado));
   }
   onDelete(id: string): void {
     this.estaCarregando = true;
@@ -54,5 +66,6 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.clientesSubscription.unsubscribe();
+    this.authObserver.unsubscribe();
   }
 }

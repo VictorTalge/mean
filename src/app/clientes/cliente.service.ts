@@ -23,6 +23,7 @@ export class ClienteService {
       fone: string;
       email: string;
       imagemURL: string;
+      criador: string;
     }>(`http://localhost:3000/api/clientes/${idCliente}`);
   }
 
@@ -42,6 +43,7 @@ export class ClienteService {
                 fone: cliente.fone,
                 email: cliente.email,
                 imagemURL: cliente.imagemURL,
+                criador: cliente.criador,
               };
             }),
             maxClientes: dados.maxClientes,
@@ -49,6 +51,7 @@ export class ClienteService {
         })
       )
       .subscribe((dados) => {
+        console.log(dados.clientes);
         this.clientes = dados.clientes;
         this.listaClientesAtualizada.next({
           clientes: [...this.clientes],
@@ -107,6 +110,7 @@ export class ClienteService {
         fone: fone,
         email: email,
         imagemURL: imagem,
+        criador: null,
       };
     }
     console.log(typeof clienteData);

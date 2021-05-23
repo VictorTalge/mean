@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { UsuarioService } from '../usuario.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -8,8 +9,9 @@ import { NgForm } from '@angular/forms';
 export class LoginComponent implements OnInit {
   estaCarregando: boolean = false;
   onLogin(form: NgForm) {
-    console.log(form.value);
+    if (form.invalid) return;
+    this.usuarioService.login(form.value.email, form.value.password);
   }
-  constructor() {}
+  constructor(private usuarioService: UsuarioService) {}
   ngOnInit(): void {}
 }

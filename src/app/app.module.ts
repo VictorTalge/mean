@@ -5,7 +5,8 @@ import { NgModule } from '@angular/core';
 //inserir esse
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './auth/auth-interceptor';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,6 +21,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
+import { ErroInterceptor } from './erro-interceptor';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ErroComponent } from './erro/erro/erro.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,6 +32,7 @@ import { SignupComponent } from './auth/signup/signup.component';
     ClienteListaComponent,
     LoginComponent,
     SignupComponent,
+    ErroComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,8 +49,13 @@ import { SignupComponent } from './auth/signup/signup.component';
     HttpClientModule,
     MatPaginatorModule,
     FormsModule,
+    MatDialogModule,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErroInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
+  entryComponents: [ErroComponent],
 })
 export class AppModule {}

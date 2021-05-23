@@ -1,7 +1,7 @@
-// importar o pacote mongoose
+//importando o pacote
 const mongoose = require('mongoose');
-
-//definir o modelo = "schema" (parece um modelo relacional)
+//definindo o "schema"
+//note a semelhança com recursos de bases relacionais
 const clienteSchema = mongoose.Schema({
   nome: {
     type: String,
@@ -19,9 +19,13 @@ const clienteSchema = mongoose.Schema({
   imagemURL: {
     type: String,
     required: true
+  },
+  criador: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Usuario",
+    required: true
   }
-})
-
-//exportar o modelo para torná-lo acessível aos outros módulos da aplicação
-//Cliente é o nome associado a esse schema
+});
+//criamos o modelo associado ao nome Cliente e exportamos
+//tornando acessível para outros módulos da aplicação
 module.exports = mongoose.model('Cliente', clienteSchema);
